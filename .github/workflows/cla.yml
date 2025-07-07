@@ -45,7 +45,7 @@ jobs:
 
             Before we can merge this pull request, we need you to sign our Contributor License Agreement (CLA).
 
-            📋 **Please read our CLA document:** $pathToCLADocument
+            📋 **Please read our CLA document:** https://github.com/clarenous/test-cla-assistant/blob/main/CLA.md
 
             ✍️ **To sign the CLA, simply comment on this PR:**
             ```
@@ -55,8 +55,6 @@ jobs:
             Once you've signed, we'll automatically update the PR status and you'll be all set! 🚀
 
             If you have any questions, feel free to reach out to the maintainers.
-          # Custom signature text that contributors need to post
-          custom-pr-sign-comment: "I have read the CLA Document and I hereby sign the CLA"
           # Custom comment when all contributors have signed
           custom-allsigned-prcomment: |
             ✅ **Awesome!** All contributors have signed the CLA.
