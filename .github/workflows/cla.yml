@@ -1,0 +1,68 @@
+name: "CLA Assistant"
+on:
+  issue_comment:
+    types: [created]
+  pull_request_target:
+    types: [opened, closed, synchronize]
+
+# Explicitly configure permissions in case your GITHUB_TOKEN workflow permissions are set to read-only
+permissions:
+  actions: write
+  contents: write # This can be 'read' if the signatures are stored in a remote repository
+  pull-requests: write
+  statuses: write
+
+jobs:
+  CLAAssistant:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "CLA Assistant"
+        if: (github.event.comment.body == 'recheck' || github.event.comment.body == 'I have read the CLA Document and I hereby sign the CLA') || github.event_name == 'pull_request_target'
+        uses: contributor-assistant/github-action@v2.6.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # The below token should have repo scope and must be manually added by you in the repository's secret
+          # This token is required only if you have configured to store the signatures in a remote repository/organization
+          # PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        with:
+          # Required: Path to the JSON file where signatures will be stored
+          path-to-signatures: "signatures/version1/cla.json"
+          # Required: Full URL to your CLA document
+          path-to-document: "https://github.com/clarenous/test-cla-assistant/blob/main/CLA.md"
+          # Required: Branch where signatures will be stored (should not be protected)
+          branch: "dev"
+          # Optional: Comma-separated list of accounts that should not be considered for CLA signature verification
+          allowlist: dependabot[bot],github-actions[bot],clarenous
+
+          # ========== Optional Customization Parameters ==========
+          # Custom commit message when creating the CLA signatures file
+          create-file-commit-message: "Creating file for storing CLA Signatures"
+          # Custom commit message when a contributor signs the CLA
+          signed-commit-message: "$contributorName has signed the CLA in $owner/$repo#$pullRequestNo"
+          # Custom PR comment to ask new contributors to sign the CLA
+          custom-notsigned-prcomment: |
+            👋 **Thank you for your contribution to Context Space!**
+
+            Before we can merge this pull request, we need you to sign our Contributor License Agreement (CLA).
+
+            📋 **Please read our CLA document:** $pathToCLADocument
+
+            ✍️ **To sign the CLA, simply comment on this PR:**
+            ```
+            I have read the CLA Document and I hereby sign the CLA
+            ```
+
+            Once you've signed, we'll automatically update the PR status and you'll be all set! 🚀
+
+            If you have any questions, feel free to reach out to the maintainers.
+          # Custom signature text that contributors need to post
+          custom-pr-sign-comment: "I have read the CLA Document and I hereby sign the CLA"
+          # Custom comment when all contributors have signed
+          custom-allsigned-prcomment: |
+            ✅ **Awesome!** All contributors have signed the CLA.
+
+            Thank you for your contribution to Context Space! 🎉
+          # Whether to lock the pull request after merging (recommended to prevent signature tampering)
+          lock-pullrequest-aftermerge: true
+          # Whether to suggest users can comment 'recheck' to trigger re-validation
+          suggest-recheck: true
